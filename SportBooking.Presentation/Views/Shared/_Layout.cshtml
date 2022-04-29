@@ -1,0 +1,77 @@
+﻿@using System.Security.Claims
+@{
+    bool? isAuthenticated = User?.Identity?.IsAuthenticated;
+    string? userEmail = String.Empty;
+    
+    if (isAuthenticated == true)
+    {
+        userEmail = User?.Claims?.SingleOrDefault(t => t.Type.Equals(ClaimTypes.Email))?.Value;
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - SportBooking.Presentation</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/SportBooking.Presentation.styles.css" asp-append-version="true"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                clifford: '#da373d',
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body>
+<header>
+    <nav class="w-full bg-gray-500 absolute top-0">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-8 p-2 items-center">
+                <a asp-controller="Home" asp-action="Index" class="text-white text-2xl">SportBooking</a>
+                <div class="text-white text-2xl"></div>
+                <div class="text-white text-2xl"></div>
+                <div class="text-white text-lg"></div>
+                <div class="text-white text-lg"></div>
+                <div class="text-white text-md text-right font-light">Sport fields</div>
+                @if (isAuthenticated == false)
+                {
+                    <a class="text-white text-md text-right font-light" asp-controller="Auth" asp-action="Register">Register</a>
+                    <a class="text-white text-md text-right font-light" asp-controller="Auth" asp-action="Login">Login</a>
+                }
+                else
+                {
+                    <a class="text-white text-md text-right font-light">Hello @userEmail</a>
+                    <form class="text-white text-md text-right font-light" asp-action="Logout" asp-controller="Auth">
+                        <button type="submit">Logout</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="border-top footer text-muted">
+    <div class="container">
+        &copy; 2022 - SportBooking.Presentation - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", false)
+</body>
+</html>

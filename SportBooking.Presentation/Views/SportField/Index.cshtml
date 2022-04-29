@@ -1,0 +1,33 @@
+﻿@model IEnumerable<SportBooking.BLL.Dtos.SportFieldDto>
+
+@{
+    ViewData["Title"] = "Sport fields";
+}
+
+<h1>Index SportField</h1>
+
+<table class="table table-bordered table-striped" style="width: 100%">
+    <thead>
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Title
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var element in Model)
+        {
+            <tr>
+                <td width="50%">
+                    @element.Id
+                </td>
+                <td width="50%">
+                    @element.Title
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
