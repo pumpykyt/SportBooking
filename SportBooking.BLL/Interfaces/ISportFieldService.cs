@@ -6,5 +6,8 @@ namespace SportBooking.BLL.Interfaces;
 public interface ISportFieldService
 {
     Task<SportFieldDto> GetSportFieldWithDetailsAsync(int sportFieldId);
-    Task<IEnumerable<SportFieldDto>> GetSportFieldsWithDetailsAsync();
+    Task<List<SportFieldDto>> GetSportFieldsWithDetailsAsync();
+    Task CreateSportField(SportFieldDto model);
+    Task DeleteSportField(int id);
+    Task UpdateSportField(SportFieldDto model);
 }

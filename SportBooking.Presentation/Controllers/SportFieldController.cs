@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
-using SportBooking.DAL.Entities;
 
 namespace SportBooking.Presentation.Controllers;
 
@@ -20,5 +20,36 @@ public class SportFieldController : Controller
     {
         var sportFields = await _sportFieldService.GetSportFieldsWithDetailsAsync();
         return View(sportFields);
+    }
+    
+    public IActionResult PostSportField()
+    {
+        return View();
+    }
+    
+    [AllowAnonymous]
+    [HttpPost]
+    public async Task<IActionResult> PostSportField(SportFieldDto model)
+    {
+        await _sportFieldService.CreateSportField(model);
+        return View();
+    }
+    
+    public async Task<IActionResult> DeleteSportField(int id)
+    {
+        await _sportFieldService.DeleteSportField(id);
+        return RedirectToAction("Index");
+    }
+    
+    public IActionResult UpdateSportField()
+    {
+        return View();
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> UpdateSportField(SportFieldDto model)
+    {
+        await _sportFieldService.UpdateSportField(model);
+        return RedirectToAction("Index");
     }
 }

@@ -1,33 +1,47 @@
-﻿@model IEnumerable<SportBooking.BLL.Dtos.SportFieldDto>
+﻿@using System.Security.Claims
+@using SportBooking.BLL.Dtos
+@model IEnumerable<SportBooking.BLL.Dtos.SportFieldDto>
 
 @{
     ViewData["Title"] = "Sport fields";
+    var isAuthenticated = User?.Identity?.IsAuthenticated;
+    var isAdmin = false;
+    var userEmail = String.Empty;
+    
+    if (isAuthenticated == true)
+    {
+        userEmail = User?.Claims?.SingleOrDefault(t => t.Type.Equals(ClaimTypes.Email))?.Value;
+        isAdmin = userEmail.Equals("admin@gmail.com");
+    }
 }
 
-<h1>Index SportField</h1>
-
-<table class="table table-bordered table-striped" style="width: 100%">
-    <thead>
-    <tr>
-        <th>
-            Id
-        </th>
-        <th>
-            Title
-        </th>
-    </tr>
-    </thead>
-    <tbody>
+<div class="container mx-auto mt-36">
+    @if (isAdmin)
+    {
+        <div class="block mb-5">
+            <a asp-controller="SportField" asp-action="PostSportField" class="w-80 bg-blue-600 text-white text-md rounded drop-shadow-lg px-4 py-2">Add sportfield</a>
+            <a asp-controller="SportField" asp-action="UpdateSportField" class="w-80 bg-orange-600 text-white text-md rounded drop-shadow-lg px-4 py-2">Edit sportfield</a>
+        </div>
+    }
+    <div class="grid grid-cols-4 gap-10">
         @foreach (var element in Model)
         {
-            <tr>
-                <td width="50%">
-                    @element.Id
-                </td>
-                <td width="50%">
-                    @element.Title
-                </td>
-            </tr>
+            <div class="bg-white drop-shadow-2xl rounded-lg p-5">
+                <img class="w-80 rounded mx-auto mb-3" src="@element.ImageUrl" alt=""/>
+                
+                <div class="text-black font-semibold text-2xl text-center mb-3">Id: @element.Id</div>
+                <div class="text-black font-semibold text-2xl text-center mb-3">@element.Title</div>
+                
+                <div class="text-center">
+                    <form asp-route-id="@element.Id" asp-action="DeleteSportField" method="delete">
+                        <div class="flex items-center justify-between">
+                            <button class="bg-red-600 text-white text-md rounded drop-shadow-lg px-4 py-2" type="submit">
+                                Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>

@@ -30,6 +30,7 @@ builder.Services.AddDbContext<DataContext>(a =>
         b => b.MigrationsAssembly("SportBooking.Presentation")
     ).UseLazyLoadingProxies()
 );
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddAutoMapper(typeof(MapperProfile));
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
