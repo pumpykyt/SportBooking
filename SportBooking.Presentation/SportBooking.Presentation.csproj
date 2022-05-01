@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.4" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0-preview.3.22175.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0-preview.3.22175.1">
         <PrivateAssets>all</PrivateAssets>
@@ -25,6 +26,10 @@
     <ItemGroup>
       <ProjectReference Include="..\SportBooking.BLL\SportBooking.BLL.csproj" />
       <ProjectReference Include="..\SportBooking.DAL\SportBooking.DAL.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\lib\fullcalendar" />
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,21 @@
+﻿@using SportBooking.BLL.Dtos
+@model SportBooking.BLL.Dtos.ReservationDto
+
+@{
+  var sportField = ViewData["SportField"] as SportFieldDto;
+  Model.Start = DateTime.Today;
+  Model.End = DateTime.Today.AddDays(1);
+  var totalPrice = (Model.End - Model.Start).TotalHours * sportField.PricePerHour;
+}
+
+<script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth'
+        });
+        calendar.render();
+      });
+</script>
+
+<div id="calendar"></div>

@@ -26,7 +26,7 @@
     <div class="grid grid-cols-4 gap-10">
         @foreach (var element in Model)
         {
-            <div class="bg-white drop-shadow-2xl rounded-lg p-5">
+            <a asp-route-sportFieldId="@element.Id" asp-controller="Reservation" asp-action="PostReservation" class="bg-white drop-shadow-2xl rounded-lg p-5 cursor-pointer">
                 <img class="w-80 rounded mx-auto mb-3" src="@element.ImageUrl" alt=""/>
                 
                 <div class="text-black font-semibold text-2xl text-center mb-3">Id: @element.Id</div>
@@ -41,7 +41,7 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </a>
         }
     </div>
 </div>

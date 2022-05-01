@@ -21,10 +21,11 @@ builder.Logging.AddSerilog(logger);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ISportFieldService, SportFieldService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddDbContext<DataContext>(a =>
     a.UseNpgsql(builder.Configuration.GetSection("ConnectionString").Value,
         b => b.MigrationsAssembly("SportBooking.Presentation")

@@ -15,7 +15,8 @@ public class MapperProfile : Profile
                 t => t.MapFrom(src => src.SportFieldDetail.StartProgram))
             .ForMember(dest => dest.Description,
                 t => t.MapFrom(src => src.SportFieldDetail.Description))
-            .ForMember(dest => dest.Address, t => t.MapFrom(src => src.SportFieldDetail.Address));
-        CreateMap<Reservation, ReservationDto>();
+            .ForMember(dest => dest.Address, t => t.MapFrom(src => src.SportFieldDetail.Address))
+            .ReverseMap();
+        CreateMap<Reservation, ReservationDto>().ReverseMap();
     }
 }

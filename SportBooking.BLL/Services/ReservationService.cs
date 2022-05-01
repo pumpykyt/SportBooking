@@ -17,14 +17,16 @@ public class ReservationService : IReservationService
         _mapper = mapper;
     }
 
-    public async Task CreateReservationAsync(Reservation reservation)
+    public async Task CreateReservationAsync(ReservationDto reservation)
     {
-        await _repository.InsertAsync(reservation);
+        var newReservation = _mapper.Map<ReservationDto, Reservation>(reservation);
+        await _repository.InsertAsync(newReservation);
     }
 
-    public async Task UpdateReservationAsync(Reservation reservation)
+    public async Task UpdateReservationAsync(ReservationDto reservation)
     {
-        await _repository.UpdateAsync(reservation);
+        var updatedReservation = _mapper.Map<ReservationDto, Reservation>(reservation);
+        await _repository.UpdateAsync(updatedReservation);
     }
 
     public async Task DeleteReservationAsync(int reservationId)

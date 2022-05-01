@@ -31,8 +31,9 @@ public class SportFieldController : Controller
     [HttpPost]
     public async Task<IActionResult> PostSportField(SportFieldDto model)
     {
+        if (!ModelState.IsValid) return View(model);
         await _sportFieldService.CreateSportField(model);
-        return View();
+        return RedirectToAction("Index");
     }
     
     public async Task<IActionResult> DeleteSportField(int id)
@@ -49,6 +50,7 @@ public class SportFieldController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateSportField(SportFieldDto model)
     {
+        if (!ModelState.IsValid) return View(model);
         await _sportFieldService.UpdateSportField(model);
         return RedirectToAction("Index");
     }
