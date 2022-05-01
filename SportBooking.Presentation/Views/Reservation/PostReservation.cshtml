@@ -6,16 +6,42 @@
   Model.Start = DateTime.Today;
   Model.End = DateTime.Today.AddDays(1);
   var totalPrice = (Model.End - Model.Start).TotalHours * sportField.PricePerHour;
+  var list = new List<int>();
 }
 
 <script>
+
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth'
+            initialView: 'dayGridMonth',
+            header: {
+                  left: 'prev,next today',
+                  center: 'title',
+                  right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            },
+            events: []
         });
         calendar.render();
       });
 </script>
 
-<div id="calendar"></div>
+<div class="grid grid-cols-2 gap-20 container mx-auto pt-36 min-h-screen">
+    <div class="block">
+        <img class="rounded mx-auto" src="@sportField.ImageUrl"/>
+        <div class="text-black text-2xl text-center font-semibold my-3">@sportField.Title</div>
+        <div class="bg-black h-0.5 mb-3"></div>
+        <div class="text-black text-lg text-center">@sportField.Description</div>
+        <div class="bg-black h-0.5 my-3"></div>
+        <div class="text-black">
+            Adress: @sportField.Address
+        </div>
+        <div class="text-black">
+            Start: @sportField.StartProgram
+        </div>
+        <div class="text-black">
+            End: @sportField.EndProgram
+        </div>
+    </div>
+    <div id="calendar"></div>
+</div>
