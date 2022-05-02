@@ -16,6 +16,7 @@ public class SportFieldController : Controller
         _sportFieldService = sportFieldService;
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
         var sportFields = await _sportFieldService.GetSportFieldsWithDetailsAsync();

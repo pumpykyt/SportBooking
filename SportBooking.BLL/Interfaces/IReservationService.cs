@@ -9,6 +9,7 @@ public interface IReservationService
     Task UpdateReservationAsync(ReservationDto reservation);
     Task DeleteReservationAsync(int reservationId);
     Task<IEnumerable<ReservationDto>> GetUserReservationsAsync(string userId);
+    Task<IEnumerable<ReservationDto>> GetSportFieldReservationsAsync(int sportFieldId);
     Task<IEnumerable<ReservationDto>> GetReservationsByTitleAsync(string title);
     Task<IEnumerable<ReservationDto>> GetAllReservationsAsync();
 }

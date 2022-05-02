@@ -16,7 +16,7 @@
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
+            initialView: 'listWeek',
             header: {
                   left: 'prev,next today',
                   center: 'title',
@@ -24,7 +24,7 @@
             },
             displayEventTime: true
         });
-        axios.get("https://localhost:7281/reservation/getallreservations")
+        axios.get("https://localhost:7281/reservation/getsportfieldreservations?sportFieldId=@sportField.Id")
              .then(response => {
                    response.data.forEach(t => calendar.addEvent({
                                                title: t.title, 
@@ -93,9 +93,6 @@
                     <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                            placeholder="Secondary colour" asp-for="SecondaryColor" type="text" data-coloris>
                     <span asp-validation-for="SecondaryColor" class="text-danger"></span>
-                </div>
-                <div>
-                    @ViewData["UserReservations"]
                 </div>
                 <button
                     class="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

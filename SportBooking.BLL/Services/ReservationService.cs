@@ -61,6 +61,13 @@ public class ReservationService : IReservationService
         return _mapper.Map<IEnumerable<Reservation>, IEnumerable<ReservationDto>>(filtered);
     }
 
+    public async Task<IEnumerable<ReservationDto>> GetSportFieldReservationsAsync(int sportFieldId)
+    {
+        var reservations = await _repository.GetAllAsync();
+        var filtered = reservations.Where(t => t.SportFieldId == sportFieldId);
+        return _mapper.Map<IEnumerable<Reservation>, IEnumerable<ReservationDto>>(filtered);
+    }
+
     public async Task<IEnumerable<ReservationDto>> GetReservationsByTitleAsync(string title)
     {
         var reservations = await _repository.GetAllAsync();

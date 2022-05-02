@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Security.Claims;
+using System.Security.Policy;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -67,5 +68,20 @@ public class AuthService : IAuthService
         {
             throw new HttpException(HttpStatusCode.BadRequest);
         }
+    }
+
+    public async Task<string> GenerateResetPasswordTokenAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null) return String.Empty;
+        return await _userManager.GeneratePasswordResetTokenAsync(user);
+    }
+
+    public async Task ResetPasswordAsync(ResetPasswordDto model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user is null) return;
+        var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+        var a = 2;
     }
 }

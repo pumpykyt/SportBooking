@@ -19,6 +19,7 @@ public class ReservationController : Controller
         _sportFieldService = sportFieldService;
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
         var userId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
@@ -27,11 +28,12 @@ public class ReservationController : Controller
     }
     
     [AllowAnonymous]
-    public async Task<IEnumerable<ReservationDto>> GetAllReservations()
+    public async Task<IEnumerable<ReservationDto>> GetSportFieldReservations(int sportFieldId)
     {
-        return await _reservationService.GetAllReservationsAsync();
+        return await _reservationService.GetSportFieldReservationsAsync(sportFieldId);
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> PostReservation(int sportFieldId)
     {
         var model = await _sportFieldService.GetSportFieldWithDetailsAsync(sportFieldId);
@@ -49,7 +51,6 @@ public class ReservationController : Controller
     {
         model.UserId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
         var result = await _reservationService.CreateReservationAsync(model);
-        ViewBag["ReservationReceipt"] = result;
         return RedirectToAction("Index");
     }
     

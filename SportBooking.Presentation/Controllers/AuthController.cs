@@ -13,10 +13,12 @@ namespace SportBooking.Presentation.Controllers;
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
+    private readonly IMailService _mailService;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IMailService mailService)
     {
         _authService = authService;
+        _mailService = mailService;
     }
 
     [AllowAnonymous]
@@ -29,6 +31,62 @@ public class AuthController : Controller
     public IActionResult Register()
     {
         return View();
+    }
+    
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ForgotPassword()
+    {
+        return View();
+    }
+    
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ResetPasswordConfirmation()
+    {
+        return View();
+    }
+    
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ResetPassword(string token, string email)
+    {
+        var model = new ResetPasswordDto
+        {
+            Token = token, 
+            Email = email
+        };
+        return View(model);
+    }
+    
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
+    {
+        if (!ModelState.IsValid) return View(model);
+        await _authService.ResetPasswordAsync(model);
+        return RedirectToAction(nameof(ResetPasswordConfirmation));
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ConfirmationLinkSent()
+    {
+        return View();
+    }
+    
+    [HttpPost]
+    [AllowAnonymous]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model)
+    {
+        if (!ModelState.IsValid) return View(model);
+        var token = await _authService.GenerateResetPasswordTokenAsync(model.Email);
+        var callback = Url.Action(nameof(ResetPassword), 
+            "Auth", new { token, email = model.Email }, Request.Scheme);
+
+        await _mailService.SendMailAsync(model.Email, "Reset password", callback);
+
+        return RedirectToAction("ConfirmationLinkSent");
     }
 
     [AllowAnonymous]

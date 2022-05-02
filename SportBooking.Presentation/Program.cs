@@ -1,7 +1,10 @@
+using System.Net;
+using System.Net.Mail;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using SportBooking.BLL.Configs;
 using SportBooking.BLL.Interfaces;
 using SportBooking.BLL.Middlewares;
 using SportBooking.BLL.Profiles;
@@ -19,12 +22,32 @@ var logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configurat
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
+//Setup configs
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+
+builder.Services.AddScoped<SmtpClient>(serviceProvider =>
+{
+    var emailConfig = builder.Configuration.GetSection("EmailConfig").Get<EmailConfig>();
+
+    return new SmtpClient
+    {
+        Host = emailConfig.Server,
+        Port = emailConfig.Port,
+        EnableSsl = emailConfig.EnableSsl,
+        DeliveryMethod = SmtpDeliveryMethod.Network,
+        UseDefaultCredentials = false,
+        Credentials = new NetworkCredential(emailConfig.Email, emailConfig.Password)
+    };
+});
+
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ISportFieldService, SportFieldService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddDbContext<DataContext>(a =>
     a.UseNpgsql(builder.Configuration.GetSection("ConnectionString").Value,
