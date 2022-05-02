@@ -16,7 +16,7 @@ public class SportFieldDto
     [Required(ErrorMessage = "That field is required!")]
     public string Description { get; set; }
     [Required(ErrorMessage = "That field is required!")]
-    public DateTime StartProgram { get; set; }
+    public string StartProgram { get; set; }
     [Required(ErrorMessage = "That field is required!")]
-    public DateTime EndProgram { get; set; }
+    public string EndProgram { get; set; }
 }

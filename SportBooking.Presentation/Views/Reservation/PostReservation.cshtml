@@ -1,27 +1,38 @@
 ﻿@using SportBooking.BLL.Dtos
+@using Newtonsoft.Json
 @model SportBooking.BLL.Dtos.ReservationDto
 
 @{
-  var sportField = ViewData["SportField"] as SportFieldDto;
-  Model.Start = DateTime.Today;
-  Model.End = DateTime.Today.AddDays(1);
-  var totalPrice = (Model.End - Model.Start).TotalHours * sportField.PricePerHour;
-  var list = new List<int>();
+    var isAuthenticated = User?.Identity?.IsAuthenticated;
+    var sportField = ViewData["SportField"] as SportFieldDto;
+    var userReservations = ViewData["UserReservations"] as string;
+    System.Diagnostics.Debug.WriteLine(userReservations);
+    Model.Start = DateTime.Today;
+    Model.End = DateTime.Today.AddDays(1);
+    Model.SportFieldId = sportField.Id;
 }
 
-<script>
-
+<script> 
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
+            initialView: 'timeGridWeek',
             header: {
                   left: 'prev,next today',
                   center: 'title',
                   right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
             },
-            events: []
+            displayEventTime: true
         });
+        axios.get("https://localhost:7281/reservation/getallreservations")
+             .then(response => {
+                   response.data.forEach(t => calendar.addEvent({
+                                               title: t.title, 
+                                               start: t.start,
+                                               end: t.end,
+                                               color: t.primaryColor
+                   }));
+             });
         calendar.render();
       });
 </script>
@@ -37,11 +48,61 @@
             Adress: @sportField.Address
         </div>
         <div class="text-black">
-            Start: @sportField.StartProgram
+            Worktime start: @sportField.StartProgram AM
         </div>
         <div class="text-black">
-            End: @sportField.EndProgram
+            Worktime end: @sportField.EndProgram AM
+        </div>
+        <div class="rounded-lg text-black uppercase mt-5 py-2 px-3 text-2xl text-white text-center font-bold bg-orange-500">
+            Price per hour: @sportField.PricePerHour$
         </div>
     </div>
-    <div id="calendar"></div>
+    <div>
+        <div id="calendar"></div>
+        @if (isAuthenticated == true)
+        {
+            <form class="mt-5 rounded bg-slate-500 px-3 py-2" method="post" asp-action="PostReservation">
+                <div class="mb-4 text-white font-semibold text-3xl">Make reservation</div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" asp-for="SportFieldId">Sportfield ID</label>
+                    <input class="form-control shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="SportFieldId"/>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" asp-for="Title"></label>
+                    <input placeholder="Title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="Title" class="form-control"/>
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" asp-for="Start"></label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="Start" class="form-control"/>
+                    <span asp-validation-for="Start" class="text-danger"></span>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" asp-for="End"></label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="End" class="form-control"/>
+                    <span asp-validation-for="End" class="text-danger"></span>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" asp-for="PrimaryColor"></label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                           placeholder="Primary colour" asp-for="PrimaryColor" type="text" data-coloris>
+                    <span asp-validation-for="PrimaryColor" class="text-danger"></span>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-white text-sm font-bold mb-2" asp-for="SecondaryColor"></label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                           placeholder="Secondary colour" asp-for="SecondaryColor" type="text" data-coloris>
+                    <span asp-validation-for="SecondaryColor" class="text-danger"></span>
+                </div>
+                <div>
+                    @ViewData["UserReservations"]
+                </div>
+                <button
+                    class="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    type="submit">
+                    Post
+                </button>
+            </form>
+        }
+    </div>
 </div>

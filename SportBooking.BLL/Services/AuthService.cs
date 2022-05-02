@@ -35,6 +35,7 @@ public class AuthService : IAuthService
 
         var identity = new ClaimsIdentity(new[]
             {
+                new Claim("id", user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, "user")
             }, CookieAuthenticationDefaults.AuthenticationScheme);

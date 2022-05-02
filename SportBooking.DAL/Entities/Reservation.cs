@@ -8,6 +8,7 @@ public class Reservation : BaseEntity
     public int Total { get; set; }
     public string PrimaryColor { get; set; }
     public string SecondaryColor { get; set; }
+    public DateTime Created { get; set; }
     public string UserId { get; set; }
     public int SportFieldId { get; set; }
     public virtual User User { get; set; }

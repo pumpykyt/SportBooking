@@ -1,0 +1,58 @@
+﻿@model IEnumerable<SportBooking.BLL.Dtos.ReservationDto>
+<div class="min-h-screen">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-36">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Id
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    SportFieldId
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    StartTime
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    EndTime
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    TotalPrice
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Created
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var element in Model)
+            {
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 text-black whitespace-nowrap">
+                        @element.Id
+                    </th>
+                    <td class="px-6 py-4 text-black">
+                        @element.SportFieldId
+                    </td>
+                    <td class="px-6 py-4 text-black">
+                        @element.Start
+                    </td>
+                    <td class="px-6 py-4 text-black">
+                        @element.End
+                    </td>
+                    <td class="px-6 py-4 text-black">
+                        @element.Total$
+                    </td>
+                    <td class="px-6 py-4 text-black">
+                        @element.Created
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="h-auto">
+
+    </div>
+</div>
+

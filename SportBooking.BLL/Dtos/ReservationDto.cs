@@ -17,6 +17,7 @@ public class ReservationDto
     public string PrimaryColor { get; set; }
     [Required(ErrorMessage = "That field is required!")]
     public string SecondaryColor { get; set; }
+    public DateTime Created { get; set; }
     public string? UserId { get; set; }
     public int SportFieldId { get; set; }
 }
