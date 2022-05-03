@@ -20,37 +20,41 @@ public class AuthService : IAuthService
         _userManager = userManager;
     }
 
-    public async Task<ClaimsIdentity> LoginAsync(string email, string password)
+    public async Task<AuthCallback> LoginAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
         {
-            throw new HttpException(HttpStatusCode.NotFound);
+            return new AuthCallback { StatusCode = HttpStatusCode.Unauthorized };
         }
         
         var authResult = await _userManager.CheckPasswordAsync(user, password);
         if (!authResult)
         {
-            throw new HttpException(HttpStatusCode.Unauthorized);
+            return new AuthCallback { StatusCode = HttpStatusCode.Unauthorized };
         }
 
         var identity = new ClaimsIdentity(new[]
-            {
-                new Claim("id", user.Id),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, "user")
-            }, CookieAuthenticationDefaults.AuthenticationScheme);
+        {
+            new Claim("id", user.Id),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, "user")
+        }, CookieAuthenticationDefaults.AuthenticationScheme);
 
-        return identity;
+        return new AuthCallback
+        {
+            StatusCode = HttpStatusCode.OK,
+            ClaimsIdentity = identity
+        };
     }
 
-    public async Task RegisterAsync(RegisterDto model)
+    public async Task<AuthCallback> RegisterAsync(RegisterDto model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
 
         if (user is not null)
         {
-            throw new HttpException(HttpStatusCode.Conflict);
+            return new AuthCallback { StatusCode = HttpStatusCode.Conflict };
         }
 
         var newUser = new User
@@ -66,8 +70,13 @@ public class AuthService : IAuthService
         
         if (!identityResult.Succeeded)
         {
-            throw new HttpException(HttpStatusCode.BadRequest);
+            return new AuthCallback { StatusCode = HttpStatusCode.InternalServerError };
         }
+
+        return new AuthCallback
+        {
+            StatusCode = HttpStatusCode.OK
+        };
     }
 
     public async Task<string> GenerateResetPasswordTokenAsync(string email)
@@ -77,11 +86,24 @@ public class AuthService : IAuthService
         return await _userManager.GeneratePasswordResetTokenAsync(user);
     }
 
+    public async Task<string> GenerateEmailConfirmationTokenAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null) return String.Empty;
+        return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+    }
+
     public async Task ResetPasswordAsync(ResetPasswordDto model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user is null) return;
         var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
         var a = 2;
+    }
+
+    public async Task ConfirmEmailAsync(string token, string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        var result = await _userManager.ConfirmEmailAsync(user, token);
     }
 }

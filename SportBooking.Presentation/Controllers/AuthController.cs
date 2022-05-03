@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -94,8 +95,13 @@ public class AuthController : Controller
     public async Task<IActionResult> Login(LoginDto user)
     {
         if (!ModelState.IsValid) return View();
-        var identity = await _authService.LoginAsync(user.Email, user.Password);
-        var principal = new ClaimsPrincipal(identity);
+        var authCallback = await _authService.LoginAsync(user.Email, user.Password);
+        if (authCallback.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            ViewBag.ErrorMessage = "Wrong login or Password";
+            return View();
+        }
+        var principal = new ClaimsPrincipal(authCallback.ClaimsIdentity);
         HttpContext.User = principal;
         Thread.CurrentPrincipal = principal;  
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
@@ -107,8 +113,41 @@ public class AuthController : Controller
     public async Task<IActionResult> Register(RegisterDto user)
     {
         if (!ModelState.IsValid) return View();
-        await _authService.RegisterAsync(user);
-        return RedirectToAction("Login", "Auth");
+        
+        var authCallback = await _authService.RegisterAsync(user);
+        if (authCallback.StatusCode == HttpStatusCode.Conflict)
+        {
+            ViewBag.ErrorMessage = "User with that email already exists";
+        }
+        if (authCallback.StatusCode == HttpStatusCode.InternalServerError)
+        {
+            ViewBag.ErrorMessage = "Server error";
+        }
+
+        var token = await _authService.GenerateEmailConfirmationTokenAsync(user.Email);
+        var emailConfirmationLink = Url.Action(nameof(ConfirmEmail), 
+                                                    "Auth", 
+                                                    new { token, email = user.Email }, 
+                                                    Request.Scheme);
+        await _mailService.SendMailAsync(user.Email, "Email.Confirmation", emailConfirmationLink);
+        
+        
+        return RedirectToAction(nameof(RegisterSuccess));
+    }
+    
+    [AllowAnonymous]
+    [HttpGet]
+    public IActionResult RegisterSuccess()
+    {
+        return View();
+    }
+    
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(string token, string email)
+    {
+        await _authService.ConfirmEmailAsync(token, email);
+        return View();
     }
     
     [HttpPost]

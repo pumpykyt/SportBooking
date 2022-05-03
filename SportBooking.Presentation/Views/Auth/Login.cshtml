@@ -7,6 +7,9 @@
 <div class="w-full mt-36">
     <div class="container mx-auto justify-content-center">
         <form asp-action="Login" method="post" class="w-1/2 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto">
+            <div class="mb4">
+                <span class="text-danger text-md">@ViewBag.ErrorMessage</span>
+            </div>
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" asp-for="Email"></label>
                 <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="Email" class="form-control"/>
