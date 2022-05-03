@@ -1,11 +1,15 @@
 ﻿@model IEnumerable<SportBooking.BLL.Dtos.ReservationDto>
-<div class="min-h-screen">
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-36">
+
+<div class="min-h-screen pt-36">
+    <div class="container mx-auto overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
                     Id
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Title
                 </th>
                 <th scope="col" class="px-6 py-3">
                     SportFieldId
@@ -30,6 +34,9 @@
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 text-black whitespace-nowrap">
                         @element.Id
+                    </th>
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 text-black whitespace-nowrap">
+                        @element.Title
                     </th>
                     <td class="px-6 py-4 text-black">
                         @element.SportFieldId

@@ -5,7 +5,7 @@ namespace SportBooking.BLL.Interfaces;
 
 public interface IReservationService
 {
-    Task<ReservationResponseDto> CreateReservationAsync(ReservationDto reservation);
+    Task<ReservationCallback> CreateReservationAsync(ReservationDto reservation);
     Task UpdateReservationAsync(ReservationDto reservation);
     Task DeleteReservationAsync(int reservationId);
     Task<IEnumerable<ReservationDto>> GetUserReservationsAsync(string userId);

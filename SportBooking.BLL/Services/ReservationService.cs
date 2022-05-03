@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
 using SportBooking.DAL.Entities;
@@ -19,8 +20,19 @@ public class ReservationService : IReservationService
         _fieldRepository = fieldRepository;
     }
 
-    public async Task<ReservationResponseDto> CreateReservationAsync(ReservationDto reservation)
+    public async Task<ReservationCallback> CreateReservationAsync(ReservationDto reservation)
     {
+        //bool notOverlap = !(dt1.Item1 < dt2.Item2 && dt2.Item1 < dt1.Item2);
+        var allReservations = await _repository.GetAllAsync();
+        var overlaps = allReservations.Any(t => t.Start < reservation.End && reservation.Start < t.End);
+        if (overlaps)
+        {
+            return new ReservationCallback
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Error = "There is already another reservation on that day"
+            };
+        }
         var newReservation = _mapper.Map<ReservationDto, Reservation>(reservation);
         var field = await _fieldRepository.GetByIdAsync(newReservation.SportFieldId);
         var dateDifference = newReservation.End - newReservation.Start;
@@ -29,16 +41,9 @@ public class ReservationService : IReservationService
         newReservation.Created = DateTime.UtcNow;
         await _repository.InsertAsync(newReservation);
 
-        return new ReservationResponseDto
+        return new ReservationCallback
         {
-            Id = newReservation.Id,
-            SportFieldTitle = field.Title,
-            ReservationTitle = newReservation.Title,
-            TotalPrice = newReservation.Total,
-            UserId = newReservation.UserId,
-            Start = newReservation.Start,
-            End = newReservation.End,
-            Created = newReservation.Created
+            StatusCode = HttpStatusCode.OK
         };
     }
 

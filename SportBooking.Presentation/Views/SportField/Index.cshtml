@@ -15,28 +15,27 @@
     }
 }
 
-<div class="container mx-auto mt-36">
+<div class="container mx-auto pt-36 min-h-screen">
     @if (isAdmin)
     {
         <div class="block mb-5">
-            <a asp-controller="SportField" asp-action="PostSportField" class="w-80 bg-blue-600 text-white text-md rounded drop-shadow-lg px-4 py-2">Add sportfield</a>
-            <a asp-controller="SportField" asp-action="UpdateSportField" class="w-80 bg-orange-600 text-white text-md rounded drop-shadow-lg px-4 py-2">Edit sportfield</a>
+            <a asp-controller="SportField" asp-action="PostSportField" class="w-80 bg-blue-500 text-white text-md rounded drop-shadow-lg px-4 py-2">Add sportfield</a>
+            <a asp-controller="SportField" asp-action="UpdateSportField" class="w-80 bg-orange-500 text-white text-md rounded drop-shadow-lg px-4 py-2">Edit sportfield</a>
         </div>
     }
     <div class="grid grid-cols-4 gap-10">
         @foreach (var element in Model)
         {
-            <a asp-route-sportFieldId="@element.Id" asp-controller="Reservation" asp-action="PostReservation" class="bg-white drop-shadow-2xl rounded-lg p-5 cursor-pointer">
+            <a asp-route-sportFieldId="@element.Id" asp-controller="SportField" asp-action="SportFieldWithDetail" class="bg-blue-700 drop-shadow-2xl rounded-lg px-4 py-3 cursor-pointer">
                 <img class="w-80 rounded mx-auto mb-3" src="@element.ImageUrl" alt=""/>
-                
-                <div class="text-black font-semibold text-2xl text-center mb-3">Id: @element.Id</div>
-                <div class="text-black font-semibold text-2xl text-center mb-3">@element.Title</div>
+                <div class="text-white font-md text-md mb-3">Id: @element.Id</div>
+                <div class="text-white font-semibold text-2xl mb-3">@element.Title</div>
                 @if (isAdmin)
                 {
                     <div class="text-center">
                         <form asp-route-id="@element.Id" asp-action="DeleteSportField" method="delete">
                             <div class="flex items-center justify-between">
-                                <button class="bg-red-600 text-white text-md rounded drop-shadow-lg px-4 py-2" type="submit">
+                                <button class="bg-red-400 text-white text-md rounded drop-shadow-lg px-4 py-2" type="submit">
                                     Delete
                                 </button>
                             </div>

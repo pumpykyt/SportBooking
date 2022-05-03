@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -36,21 +37,22 @@ public class ReservationController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> PostReservation(int sportFieldId)
     {
-        var model = await _sportFieldService.GetSportFieldWithDetailsAsync(sportFieldId);
-        var userId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
-        var userReservations = await _reservationService.GetUserReservationsAsync(userId);
-        ViewData["UserReservations"] = userReservations;
-        ViewData["SportField"] = model;
         var viewModel = new ReservationDto();
-        viewModel.SportFieldId = model.Id;
+        viewModel.SportFieldId = sportFieldId;
         return View(viewModel);
     }
 
     [HttpPost]
     public async Task<IActionResult> PostReservation(ReservationDto model)
     {
+        if (!ModelState.IsValid) return View(model);
         model.UserId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
-        var result = await _reservationService.CreateReservationAsync(model);
+        var callback = await _reservationService.CreateReservationAsync(model);
+        if (callback.StatusCode == HttpStatusCode.BadRequest)
+        {
+            ViewBag.ErrorMessage = callback.Error;
+            return View(model);
+        }
         return RedirectToAction("Index");
     }
     

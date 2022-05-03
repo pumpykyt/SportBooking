@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using SportBooking.BLL.Validators;
 
 namespace SportBooking.BLL.Dtos;
 
@@ -8,6 +9,7 @@ public class ReservationDto
     [Required(ErrorMessage = "That field is required!")]
     public DateTime Start { get; set; }
     [Required(ErrorMessage = "That field is required!")]
+    [AttributeGreaterThan("Start", ErrorMessage = "Reservation`s end date should be after the start date")]
     public DateTime End { get; set; }
     [Required(ErrorMessage = "That field is required!")]
     public string Title { get; set; }

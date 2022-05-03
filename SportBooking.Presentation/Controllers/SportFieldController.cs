@@ -17,6 +17,13 @@ public class SportFieldController : Controller
     }
 
     [AllowAnonymous]
+    public async Task<IActionResult> SportFieldWithDetail(int sportFieldId)
+    {
+        var field = await _sportFieldService.GetSportFieldWithDetailsAsync(sportFieldId);
+        return View(field);
+    }
+
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
         var sportFields = await _sportFieldService.GetSportFieldsWithDetailsAsync();
