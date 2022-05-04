@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportBooking.DAL", "SportBo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportBooking.BLL", "SportBooking.BLL\SportBooking.BLL.csproj", "{6CDF0CC8-0092-433C-A701-8A3A4618FDCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportBooking.Tests", "SportBooking.Tests\SportBooking.Tests.csproj", "{35AA5748-2B31-405F-8B88-25876571B337}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{6CDF0CC8-0092-433C-A701-8A3A4618FDCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CDF0CC8-0092-433C-A701-8A3A4618FDCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CDF0CC8-0092-433C-A701-8A3A4618FDCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35AA5748-2B31-405F-8B88-25876571B337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35AA5748-2B31-405F-8B88-25876571B337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35AA5748-2B31-405F-8B88-25876571B337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35AA5748-2B31-405F-8B88-25876571B337}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,53 @@
+﻿@model SportBooking.BLL.Dtos.ReservationDto
+
+<div class="container mx-auto pt-36 min-h-screen">
+    <form class="w-1/2 mx-auto text-center mt-5 rounded bg-slate-500 px-3 py-2" method="post" asp-action="UpdateReservation">
+        <div class="mb-4 text-white font-semibold text-3xl">Update reservation</div>
+        <div>
+            <input hidden value="@Model.Id" class="bg-gray-600 form-control shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" asp-for="Id"/>
+        </div>
+        <div>
+            <input hidden value="@Model.SportFieldId" class="bg-gray-600 form-control shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" asp-for="SportFieldId"/>
+        </div>
+        <div>
+            <input hidden value="@Model.Created" class="bg-gray-600 form-control shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" asp-for="Created"/>
+        </div>
+        <div>
+            <input hidden value="@Model.Total" class="bg-gray-600 form-control shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" asp-for="Total"/>
+        </div>
+        <div class="mb-4">
+            <label class="block text-white text-sm font-bold mb-2" asp-for="Title"></label>
+            <input placeholder="Title" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" asp-for="Title" class="form-control"/>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-4">
+            <label class="block text-white text-sm font-bold mb-2" asp-for="Start"></label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="Start" class="form-control"/>
+            <span asp-validation-for="Start" class="text-danger"></span>
+            <span class="text-danger">@ViewBag.ErrorMessage</span>
+        </div>
+        <div class="mb-4">
+            <label class="block text-white text-sm font-bold mb-2" asp-for="End"></label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="End" class="form-control"/>
+            <span asp-validation-for="End" class="text-danger"></span>
+            <span class="text-danger">@ViewBag.ErrorMessage</span>
+        </div>
+        <div class="mb-4">
+            <label class="block text-white text-sm font-bold mb-2" asp-for="PrimaryColor"></label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="Primary colour" asp-for="PrimaryColor" type="text" data-coloris>
+            <span asp-validation-for="PrimaryColor" class="text-danger"></span>
+        </div>
+        <div class="mb-4">
+            <label class="block text-white text-sm font-bold mb-2" asp-for="SecondaryColor"></label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   placeholder="Secondary colour" asp-for="SecondaryColor" type="text" data-coloris>
+            <span asp-validation-for="SecondaryColor" class="text-danger"></span>
+        </div>
+        <button
+            class="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit">
+            Update
+        </button>
+    </form>
+</div>

@@ -9,6 +9,8 @@ public class MapperProfile : Profile
     public MapperProfile()
     {
         CreateMap<SportField, SportFieldDto>()
+            .ForMember(dest => dest.SportFieldDetailId, 
+                t => t.MapFrom(src => src.SportFieldDetail.Id))
             .ForMember(dest => dest.EndProgram,
                 t => t.MapFrom(src => src.SportFieldDetail.EndProgram))
             .ForMember(dest => dest.StartProgram,

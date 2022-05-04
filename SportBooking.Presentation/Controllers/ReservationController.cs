@@ -41,6 +41,36 @@ public class ReservationController : Controller
         viewModel.SportFieldId = sportFieldId;
         return View(viewModel);
     }
+    
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IEnumerable<ReservationDto>> GetSportFieldReservationsByTitleAsync(string title, int sportFieldId)
+    {
+        return await _reservationService.GetSportFieldReservationsByTitleAsync(title, sportFieldId);
+    }
+
+    public async Task<IActionResult> DeleteReservation(int id)
+    {
+        await _reservationService.DeleteReservationAsync(id);
+        return RedirectToAction("Index");
+    }
+
+    public async Task<IActionResult> UpdateReservation(int id)
+    {
+        var reservation = await _reservationService.GetReservationAsync(id);
+        return View(reservation);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateReservation(ReservationDto model)
+    {
+        if (!ModelState.IsValid) return View(model);
+        model.UserId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
+        var callback = await _reservationService.UpdateReservationAsync(model);
+        if (callback.StatusCode != HttpStatusCode.BadRequest) return View(model);
+        ViewBag.ErrorMessage = callback.Error;
+        return View(model);
+    }
 
     [HttpPost]
     public async Task<IActionResult> PostReservation(ReservationDto model)
@@ -48,12 +78,9 @@ public class ReservationController : Controller
         if (!ModelState.IsValid) return View(model);
         model.UserId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
         var callback = await _reservationService.CreateReservationAsync(model);
-        if (callback.StatusCode == HttpStatusCode.BadRequest)
-        {
-            ViewBag.ErrorMessage = callback.Error;
-            return View(model);
-        }
-        return RedirectToAction("Index");
+        if (callback.StatusCode != HttpStatusCode.BadRequest) return RedirectToAction("Index");
+        ViewBag.ErrorMessage = callback.Error;
+        return View(model);
     }
     
 }

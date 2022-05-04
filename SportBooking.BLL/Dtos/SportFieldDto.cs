@@ -5,6 +5,7 @@ namespace SportBooking.BLL.Dtos;
 public class SportFieldDto
 {
     public int Id { get; set; }
+    public int SportFieldDetailId { get; set; }
     [Required(ErrorMessage = "That field is required!")]
     public string Address { get; set; }
     [Required(ErrorMessage = "That field is required!")]

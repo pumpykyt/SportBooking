@@ -3,12 +3,15 @@
 <div class="w-full pt-24 min-h-screen">
     <div class="container mx-auto justify-content-center">
         <form asp-action="UpdateSportField" method="post" class="w-1/2 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto">
+            <div>
+                <input hidden class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="SportFieldDetailId" class="form-control"/>
+            </div>
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" asp-for="Id"></label>
                 <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="Id" class="form-control"/>
                 <span asp-validation-for="Id" class="text-danger"></span>
             </div>
-            
+
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" asp-for="Address"></label>
                 <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="Address" class="form-control"/>

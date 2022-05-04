@@ -10,16 +10,20 @@ namespace SportBooking.Presentation.Controllers;
 public class SportFieldController : Controller
 {
     private readonly ISportFieldService _sportFieldService;
+    private readonly IReservationService _reservationService;
 
-    public SportFieldController(ISportFieldService sportFieldService)
+    public SportFieldController(ISportFieldService sportFieldService, IReservationService reservationService)
     {
         _sportFieldService = sportFieldService;
+        _reservationService = reservationService;
     }
 
     [AllowAnonymous]
-    public async Task<IActionResult> SportFieldWithDetail(int sportFieldId)
+    public async Task<IActionResult> SportFieldWithDetail(int id, string? query)
     {
-        var field = await _sportFieldService.GetSportFieldWithDetailsAsync(sportFieldId);
+        var field = await _sportFieldService.GetSportFieldWithDetailsAsync(id);
+        var reservations = await _reservationService.GetSportFieldReservationsByTitleAsync(query, id);
+        ViewBag.SearchedReservations = reservations;
         return View(field);
     }
 
@@ -50,9 +54,10 @@ public class SportFieldController : Controller
         return RedirectToAction("Index");
     }
     
-    public IActionResult UpdateSportField()
+    public async Task<IActionResult> UpdateSportField(int id)
     {
-        return View();
+        var sportField = await _sportFieldService.GetSportFieldWithDetailsAsync(id);
+        return View(sportField);
     }
     
     [HttpPost]

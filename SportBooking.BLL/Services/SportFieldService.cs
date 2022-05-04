@@ -71,7 +71,7 @@ public class SportFieldService : ISportFieldService
         
         var updatedDetail = new SportFieldDetail
         {
-            Id = updatedField.SportFieldDetail.Id,
+            Id = model.SportFieldDetailId,
             Description = model.Description,
             Address = model.Address,
             EndProgram = model.EndProgram,

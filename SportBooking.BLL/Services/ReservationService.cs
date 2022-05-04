@@ -47,16 +47,25 @@ public class ReservationService : IReservationService
         };
     }
 
-    public async Task UpdateReservationAsync(ReservationDto reservation)
+    public async Task<ReservationCallback> UpdateReservationAsync(ReservationDto reservation)
     {
         var updatedReservation = _mapper.Map<ReservationDto, Reservation>(reservation);
+        var dateDifference = updatedReservation.End - updatedReservation.Start;
+        var field = await _fieldRepository.GetByIdAsync(updatedReservation.SportFieldId);
+        var totalPrice = (dateDifference.Days * 24 + dateDifference.Hours) * field.PricePerHour;
+        updatedReservation.Total = totalPrice;
         await _repository.UpdateAsync(updatedReservation);
+        
+        return new ReservationCallback
+        {
+            StatusCode = HttpStatusCode.OK
+        };
     }
 
     public async Task DeleteReservationAsync(int reservationId)
     {
         var reservation = await _repository.GetByIdAsync(reservationId);
-        await _repository.UpdateAsync(reservation);
+        await _repository.DeleteAsync(reservation);
     }
 
     public async Task<IEnumerable<ReservationDto>> GetUserReservationsAsync(string userId)
@@ -73,10 +82,12 @@ public class ReservationService : IReservationService
         return _mapper.Map<IEnumerable<Reservation>, IEnumerable<ReservationDto>>(filtered);
     }
 
-    public async Task<IEnumerable<ReservationDto>> GetReservationsByTitleAsync(string title)
+    public async Task<IEnumerable<ReservationDto>> GetSportFieldReservationsByTitleAsync(string? title, int sportFieldId)
     {
         var reservations = await _repository.GetAllAsync();
-        var filtered = reservations.Where(t => t.Title.Contains(title));
+        if (title is null) return null;
+        var filtered = reservations.Where(t => t.Title.Contains(title) && 
+                                                                           t.SportFieldId == sportFieldId);
         return _mapper.Map<IEnumerable<Reservation>, IEnumerable<ReservationDto>>(filtered);
     }
 
@@ -84,5 +95,11 @@ public class ReservationService : IReservationService
     {
         var reservations = await _repository.GetAllAsync();
         return _mapper.Map<IEnumerable<Reservation>, IEnumerable<ReservationDto>>(reservations);
+    }
+
+    public async Task<ReservationDto> GetReservationAsync(int id)
+    {
+        var reservation = await _repository.GetByIdAsync(id);
+        return _mapper.Map<Reservation, ReservationDto>(reservation);
     }
 }
