@@ -8,8 +8,7 @@ using SportBooking.BLL.Interfaces;
 
 namespace SportBooking.Presentation.Controllers;
 
-[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-public class ReservationController : Controller
+public class ReservationController : BaseController
 {
     private readonly IReservationService _reservationService;
     private readonly ISportFieldService _sportFieldService;
@@ -67,7 +66,7 @@ public class ReservationController : Controller
         if (!ModelState.IsValid) return View(model);
         model.UserId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
         var callback = await _reservationService.UpdateReservationAsync(model);
-        if (callback.StatusCode != HttpStatusCode.BadRequest) return View(model);
+        if (callback.StatusCode != HttpStatusCode.BadRequest) return RedirectToAction("Index");
         ViewBag.ErrorMessage = callback.Error;
         return View(model);
     }

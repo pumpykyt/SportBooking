@@ -19,7 +19,6 @@ public class HomeController : Controller
     [AllowAnonymous]
     public IActionResult Index()
     {
-        var test = User.Identity.IsAuthenticated;
         return View();
     }
     

@@ -4,14 +4,12 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
 
 namespace SportBooking.Presentation.Controllers;
 
-[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-public class AuthController : Controller
+public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
     private readonly IMailService _mailService;

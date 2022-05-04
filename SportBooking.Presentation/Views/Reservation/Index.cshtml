@@ -24,9 +24,6 @@
                     TotalPrice
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Created
-                </th>
-                <th scope="col" class="px-6 py-3">
                     Actions
                 </th>
             </tr>
@@ -52,9 +49,6 @@
                     </td>
                     <td class="px-6 py-4 text-black">
                         @element.Total$
-                    </td>
-                    <td class="px-6 py-4 text-black">
-                        @element.Created
                     </td>
                     <td class="px-6 py-4 text-white">
                         <a asp-controller="Reservation" asp-action="UpdateReservation" asp-route-id="@element.Id" class="rounded bg-amber-600 px-3 py-1">Update</a>

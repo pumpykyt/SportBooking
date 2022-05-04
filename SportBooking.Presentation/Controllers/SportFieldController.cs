@@ -6,8 +6,7 @@ using SportBooking.BLL.Interfaces;
 
 namespace SportBooking.Presentation.Controllers;
 
-[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-public class SportFieldController : Controller
+public class SportFieldController : BaseController
 {
     private readonly ISportFieldService _sportFieldService;
     private readonly IReservationService _reservationService;

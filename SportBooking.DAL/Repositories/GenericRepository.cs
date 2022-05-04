@@ -15,9 +15,30 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         _entities = context.Set<T>();
     }
 
-    public async Task<List<T>> GetAllAsync() => await _entities.ToListAsync();
+    public virtual IQueryable<T> QueryWithNavigationFields()
+    {
+        var query = _entities.AsQueryable();
+        var navigations = _context.Model.FindEntityType(typeof(T))?
+                                                            .GetDerivedTypesInclusive()
+                                                            .SelectMany(t => t.GetNavigations())
+                                                            .Distinct();
 
-    public async Task<T?> GetByIdAsync(int id) => await _entities.SingleOrDefaultAsync(t => t.Id == id);
+        if (navigations != null)
+        {
+            query = navigations.Aggregate(query, (current, property) 
+                => current.Include(property.Name));
+        }
+
+        return query;
+    }
+
+    public async Task<List<T>> GetAllAsync() => await QueryWithNavigationFields()
+                                                      .AsNoTracking()
+                                                      .ToListAsync();
+
+    public async Task<T?> GetByIdAsync(int id) => await QueryWithNavigationFields()
+                                                        .AsNoTracking()
+                                                        .SingleOrDefaultAsync(t => t.Id == id);
 
     public async Task InsertAsync(T entity)
     {
@@ -37,7 +58,8 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
             throw new ArgumentNullException("Entity is null");
         }
 
-        _entities.Update(entity);
+        var oldEntity = await QueryWithNavigationFields().SingleOrDefaultAsync(t => t.Id == entity.Id);
+        _context.Entry(oldEntity).CurrentValues.SetValues(entity);
         await _context.SaveChangesAsync();
     }
 

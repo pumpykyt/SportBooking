@@ -22,9 +22,9 @@ public class ReservationService : IReservationService
 
     public async Task<ReservationCallback> CreateReservationAsync(ReservationDto reservation)
     {
-        //bool notOverlap = !(dt1.Item1 < dt2.Item2 && dt2.Item1 < dt1.Item2);
         var allReservations = await _repository.GetAllAsync();
-        var overlaps = allReservations.Any(t => t.Start < reservation.End && reservation.Start < t.End);
+        var overlaps = allReservations.Any(t => t.Start < reservation.End && 
+                                                             reservation.Start < t.End);
         if (overlaps)
         {
             return new ReservationCallback
@@ -49,6 +49,18 @@ public class ReservationService : IReservationService
 
     public async Task<ReservationCallback> UpdateReservationAsync(ReservationDto reservation)
     {
+        var allReservations = await _repository.GetAllAsync();
+        var overlaps = allReservations.Any(t => t.Start < reservation.End && 
+                                                             reservation.Start < t.End && 
+                                                             t.Id != reservation.Id);
+        if (overlaps)
+        {
+            return new ReservationCallback
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Error = "There is already another reservation on that day"
+            };
+        }
         var updatedReservation = _mapper.Map<ReservationDto, Reservation>(reservation);
         var dateDifference = updatedReservation.End - updatedReservation.Start;
         var field = await _fieldRepository.GetByIdAsync(updatedReservation.SportFieldId);
