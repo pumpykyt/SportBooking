@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -13,20 +14,21 @@ using Xunit;
 
 namespace SportBooking.Tests.Tests;
 
-public class SportFieldTests
+public class SportFieldTests : IDisposable
 {
     private readonly ISportFieldService _sportFieldService;
     private readonly SportFieldDto _testModel;
-
+    private readonly DataContext _context;
+    
     public SportFieldTests()
     {
         var builder = new DbContextOptionsBuilder<DataContext>();
         builder.UseInMemoryDatabase("TestsDb");
-        var context = new DataContext(builder.Options);
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-        var sportFieldRepository = new GenericRepository<SportField>(context);
-        var detailRepository = new GenericRepository<SportFieldDetail>(context);
+        _context = new DataContext(builder.Options);
+        _context.Database.EnsureDeleted();
+        _context.Database.EnsureCreated();
+        var sportFieldRepository = new GenericRepository<SportField>(_context);
+        var detailRepository = new GenericRepository<SportFieldDetail>(_context);
         var mapperConfig = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile(new MapperProfile());
@@ -64,7 +66,27 @@ public class SportFieldTests
         var result = await _sportFieldService.GetSportFieldWithDetailsAsync(_testModel.Id);
         Assert.Equal(_testModel.Id, result.Id);
     }
-    
+
+    [Fact]
+    public async Task UpdateSportField_Test()
+    {
+        var modelToUpdate = new SportFieldDto
+        {
+            Id = 1,
+            SportFieldDetailId = 1,
+            ImageUrl = "UpdatedTest",
+            Address = "UpdatedTest",
+            Description = "UpdatedTest",
+            EndProgram = "UpdatedTest",
+            PricePerHour = 999,
+            StartProgram = "UpdatedTest",
+            Title = "UpdatedTest"
+        };
+
+        await _sportFieldService.UpdateSportField(modelToUpdate);
+        var result = await _sportFieldService.GetSportFieldWithDetailsAsync(modelToUpdate.Id);
+        Assert.Equal(modelToUpdate.Title, result.Title);
+    }
 
     [Fact]
     public async Task DeleteSportField_Test()
@@ -74,6 +96,11 @@ public class SportFieldTests
         await _sportFieldService.DeleteSportField(_testModel.Id);
         var dataAfterDelete = await _sportFieldService.GetSportFieldsWithDetailsAsync();
         var countAfterDelete = dataAfterDelete.Count();
-        Assert.Equal(countBeforeDelete, countAfterDelete + 1);
+        Assert.Equal(countBeforeDelete - 1, countAfterDelete);
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }

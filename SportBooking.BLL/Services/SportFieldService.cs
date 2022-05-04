@@ -55,6 +55,7 @@ public class SportFieldService : ISportFieldService
     public async Task DeleteSportField(int id)
     {
         var field = await _repository.GetByIdAsync(id);
+        _repository.DetachLocal(field, id);
         await _repository.DeleteAsync(field);
     }
 

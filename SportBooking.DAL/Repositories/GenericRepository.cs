@@ -8,11 +8,23 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {
     private readonly DataContext _context;
     private DbSet<T> _entities;
-
+    
     public GenericRepository(DataContext context)
     {
         _context = context;
         _entities = context.Set<T>();
+    }
+    
+    public void DetachLocal<T>(T t, int entryId) where T : BaseEntity
+    {
+        var local = _context.Set<T>()
+                            .Local
+                            .FirstOrDefault(entry => entry.Id.Equals(entryId));
+        if (local is not null)
+        {
+            _context.Entry(local).State = EntityState.Detached;
+        }
+        _context.Entry(t).State = EntityState.Modified;
     }
 
     public virtual IQueryable<T> QueryWithNavigationFields()

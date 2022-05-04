@@ -52,7 +52,7 @@ builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddDbContext<DataContext>(a =>
     a.UseNpgsql(builder.Configuration.GetSection("ConnectionString").Value,
         b => b.MigrationsAssembly("SportBooking.Presentation")
-    ).UseLazyLoadingProxies()
+    )
 );
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddAutoMapper(typeof(MapperProfile));

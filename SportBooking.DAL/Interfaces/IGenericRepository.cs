@@ -9,4 +9,5 @@ public interface IGenericRepository<T> where T : BaseEntity
     Task InsertAsync(T entity);
     Task UpdateAsync(T entity);
     Task DeleteAsync(T entity);
+    void DetachLocal<T>(T t, int entryId) where T : BaseEntity;
 }
