@@ -23,7 +23,7 @@ public class SportFieldTests : IDisposable
     public SportFieldTests()
     {
         var builder = new DbContextOptionsBuilder<DataContext>();
-        builder.UseInMemoryDatabase("TestsDb");
+        builder.UseInMemoryDatabase("SportFieldTestsDb");
         _context = new DataContext(builder.Options);
         _context.Database.EnsureDeleted();
         _context.Database.EnsureCreated();
@@ -56,7 +56,7 @@ public class SportFieldTests : IDisposable
     public async Task CreateSportField_Test()
     {
         await _sportFieldService.CreateSportField(_testModel);
-        var result = await _sportFieldService.GetSportFieldWithDetailsAsync(_testModel.Id);
+        var result = await _context.SportFields.SingleOrDefaultAsync(t => t.Id == _testModel.Id);
         Assert.Equal(_testModel.Id, result.Id);
     }
 
@@ -84,18 +84,18 @@ public class SportFieldTests : IDisposable
         };
 
         await _sportFieldService.UpdateSportField(modelToUpdate);
-        var result = await _sportFieldService.GetSportFieldWithDetailsAsync(modelToUpdate.Id);
+        var result = await _context.SportFields.SingleOrDefaultAsync(t => t.Id == modelToUpdate.Id);
         Assert.Equal(modelToUpdate.Title, result.Title);
     }
 
     [Fact]
     public async Task DeleteSportField_Test()
     {
-        var dataBeforeDelete = await _sportFieldService.GetSportFieldsWithDetailsAsync();
-        var countBeforeDelete = dataBeforeDelete.Count();
+        var dataBeforeDelete = await _context.SportFields.ToListAsync();
+        var countBeforeDelete = dataBeforeDelete.Count;
         await _sportFieldService.DeleteSportField(_testModel.Id);
-        var dataAfterDelete = await _sportFieldService.GetSportFieldsWithDetailsAsync();
-        var countAfterDelete = dataAfterDelete.Count();
+        var dataAfterDelete = await _context.SportFields.ToListAsync();
+        var countAfterDelete = dataAfterDelete.Count;
         Assert.Equal(countBeforeDelete - 1, countAfterDelete);
     }
 
