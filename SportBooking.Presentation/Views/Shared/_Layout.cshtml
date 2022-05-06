@@ -7,7 +7,7 @@
     if (isAuthenticated == true)
     {
         userEmail = User?.Claims?.SingleOrDefault(t => t.Type.Equals(ClaimTypes.Email))?.Value;
-        isAdmin = userEmail.Equals("admin@gmail.com");
+        isAdmin = User.IsInRole("admin");
     }
 }
 
@@ -51,7 +51,7 @@
                 <div class="text-white text-2xl"></div>
                 <div class="text-white text-lg"></div>
                 <div class="text-white text-lg"></div>
-                <a class="text-white text-md text-right font-light" asp-controller="SportField" asp-action="Index">Sport fields</a>
+                <div class="text-white text-lg"></div>
                 @if (isAuthenticated == false)
                 {
                     <a class="text-white text-md text-right font-light" asp-controller="Auth" asp-action="Register">
@@ -74,7 +74,7 @@
         </div>
     </nav>
 </header>
-<div class="bg-blue-900">
+<div class="bg-white-900">
     <main role="main">
         @RenderBody()
     </main>

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Exceptions;
 using SportBooking.BLL.Interfaces;
+using SportBooking.DAL.Constraints;
 using SportBooking.DAL.Entities;
 
 namespace SportBooking.BLL.Services;
@@ -14,10 +15,12 @@ namespace SportBooking.BLL.Services;
 public class AuthService : IAuthService
 {
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public AuthService(UserManager<User> userManager)
+    public AuthService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     public async Task<AuthCallback> LoginAsync(string email, string password)
@@ -34,9 +37,12 @@ public class AuthService : IAuthService
             return new AuthCallback { StatusCode = HttpStatusCode.Unauthorized };
         }
 
+        var userRole = await _userManager.GetRolesAsync(user);
+
         var identity = new ClaimsIdentity(new[]
         {
             new Claim("id", user.Id),
+            new Claim(ClaimTypes.Role, userRole[0]),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, "user")
         }, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -60,15 +66,21 @@ public class AuthService : IAuthService
         var newUser = new User
         {
             Email = model.Email,
-            UserName = model.UserName,
+            UserName = model.Email,
             FirstName = model.FirstName,
-            LastName = model.LastName,
-            PhoneNumber = model.PhoneNumber
+            LastName = model.LastName
         };
 
         var identityResult = await _userManager.CreateAsync(newUser, model.Password);
         
         if (!identityResult.Succeeded)
+        {
+            return new AuthCallback { StatusCode = HttpStatusCode.InternalServerError };
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(newUser, SystemRoleConstraints.UserRole);
+        
+        if (!roleResult.Succeeded)
         {
             return new AuthCallback { StatusCode = HttpStatusCode.InternalServerError };
         }
