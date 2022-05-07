@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
 using SportBooking.DAL.Entities;
@@ -31,8 +32,26 @@ public class SportFieldService : ISportFieldService
         return _mapper.Map<List<SportField>, List<SportFieldDto>>(fields);
     }
 
-    public async Task CreateSportField(SportFieldDto model)
+    public async Task<SportFieldCallback> CreateSportField(SportFieldDto model)
     {
+        var startScheduleHours = Convert.ToDouble(model.StartProgram.Split('-')[0]);
+        var startScheduleMinutes = Convert.ToDouble(model.StartProgram.Split('-')[1]);
+        
+        var endScheduleHours = Convert.ToDouble(model.EndProgram.Split('-')[0]);
+        var endScheduleMinutes = Convert.ToDouble(model.EndProgram.Split('-')[1]);
+
+        if (startScheduleHours is < 0 or > 24 || 
+            endScheduleHours is < 0 or > 24 || 
+            startScheduleMinutes is < 0 or > 59 || 
+            endScheduleMinutes is < 0 or > 59)
+        {
+            return new SportFieldCallback
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Error = "Enter valid time"
+            };
+        }
+        
         var field = new SportField
         {
             Title = model.Title,
@@ -50,6 +69,11 @@ public class SportFieldService : ISportFieldService
             SportFieldId = field.Id
         };
         await _detailRepository.InsertAsync(detail);
+
+        return new SportFieldCallback
+        {
+            StatusCode = HttpStatusCode.OK
+        };
     }
 
     public async Task DeleteSportField(int id)

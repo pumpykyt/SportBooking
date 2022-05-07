@@ -11,13 +11,18 @@
       document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'listWeek',
+            initialView: 'dayGridMonth',
             header: {
                   left: 'prev,next today',
                   center: 'title',
                   right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
             },
-            displayEventTime: true
+            displayEventTime: true,
+            eventTimeFormat: { 
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }
         });
         axios.get("https://localhost:7281/reservation/getsportfieldreservations?sportFieldId=@Model.Id")
              .then(response => {

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Globalization;
+using System.Net;
 using AutoMapper;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
@@ -20,24 +21,58 @@ public class ReservationService : IReservationService
         _fieldRepository = fieldRepository;
     }
 
+    public async Task PayReservationAsync(int id)
+    {
+        var reservation = await _repository.GetByIdAsync(id);
+        reservation.Status = "Payed";
+        await _repository.UpdateAsync(reservation);
+    }
+
     public async Task<ReservationCallback> CreateReservationAsync(ReservationDto reservation)
     {
         var allReservations = await _repository.GetAllAsync();
         var overlaps = allReservations.Any(t => t.Start < reservation.End && 
-                                                             reservation.Start < t.End);
+                                                reservation.Start < t.End && 
+                                                t.SportFieldId == reservation.SportFieldId &&
+                                                t.Id != reservation.Id);
         if (overlaps)
         {
             return new ReservationCallback
             {
-                StatusCode = HttpStatusCode.BadRequest,
+                StatusCode = HttpStatusCode.Conflict,
                 Error = "There is already another reservation on that day"
             };
         }
+
+        if (reservation.Start < DateTime.Now)
+        {
+            return new ReservationCallback
+            {
+                StatusCode = HttpStatusCode.Forbidden,
+                Error = "You can`t make a reservation on date before today"
+            };
+        }
+
         var newReservation = _mapper.Map<ReservationDto, Reservation>(reservation);
         var field = await _fieldRepository.GetByIdAsync(newReservation.SportFieldId);
+        var startSchedule = new DateTime().AddHours(Convert.ToDouble(field.SportFieldDetail.StartProgram.Split('-')[0]))
+                                          .AddMinutes(Convert.ToDouble(field.SportFieldDetail.StartProgram.Split('-')[1]));
+
+        var endSchedule = new DateTime().AddHours(Convert.ToDouble(field.SportFieldDetail.EndProgram.Split('-')[0]))
+                                        .AddMinutes(Convert.ToDouble(field.SportFieldDetail.EndProgram.Split('-')[1]));
+        if (TimeSpan.Compare(startSchedule.TimeOfDay, newReservation.Start.TimeOfDay) == 1 || 
+            TimeSpan.Compare(endSchedule.TimeOfDay, newReservation.End.TimeOfDay) == -1)
+        {
+            return new ReservationCallback
+            {
+                StatusCode = HttpStatusCode.Forbidden,
+                Error = "Check sportfield schedule"
+            };
+        }
         var dateDifference = newReservation.End - newReservation.Start;
         var totalPrice = (dateDifference.Days * 24 + dateDifference.Hours) * field.PricePerHour;
         newReservation.Total = totalPrice;
+        newReservation.Status = "Pending";
         newReservation.Created = DateTime.UtcNow;
         await _repository.InsertAsync(newReservation);
 
@@ -51,8 +86,9 @@ public class ReservationService : IReservationService
     {
         var allReservations = await _repository.GetAllAsync();
         var overlaps = allReservations.Any(t => t.Start < reservation.End && 
-                                                             reservation.Start < t.End && 
-                                                             t.Id != reservation.Id);
+                                                reservation.Start < t.End && 
+                                                t.SportFieldId == reservation.SportFieldId &&
+                                                t.Id != reservation.Id);
         if (overlaps)
         {
             return new ReservationCallback

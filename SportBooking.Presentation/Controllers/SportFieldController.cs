@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportBooking.BLL.Dtos;
@@ -43,8 +44,10 @@ public class SportFieldController : BaseController
     public async Task<IActionResult> PostSportField(SportFieldDto model)
     {
         if (!ModelState.IsValid) return View(model);
-        await _sportFieldService.CreateSportField(model);
-        return RedirectToAction("Index");
+        var result = await _sportFieldService.CreateSportField(model);
+        if (result.StatusCode != HttpStatusCode.BadRequest) return RedirectToAction("Index");
+        ViewBag.ErrorMessage = result.Error;
+        return View(model);
     }
     
     public async Task<IActionResult> DeleteSportField(int id)

@@ -37,10 +37,18 @@ public class ReservationController : BaseController
     public async Task<IActionResult> PostReservation(int sportFieldId)
     {
         var viewModel = new ReservationDto();
+        viewModel.Start = DateTime.Today;
+        viewModel.End = DateTime.Today.AddDays(1);
         viewModel.SportFieldId = sportFieldId;
         return View(viewModel);
     }
     
+    public async Task<IActionResult> PayReservation(int id)
+    {
+        await _reservationService.PayReservationAsync(id);
+        return RedirectToAction("Index");
+    }
+
     [AllowAnonymous]
     [HttpGet]
     public async Task<IEnumerable<ReservationDto>> GetSportFieldReservationsByTitleAsync(string title, int sportFieldId)
@@ -61,9 +69,11 @@ public class ReservationController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateReservation(ReservationDto model)
+    public async Task<IActionResult> UpdateReservation(int id, int sportFieldId, ReservationDto model)
     {
         if (!ModelState.IsValid) return View(model);
+        model.Id = id; 
+        model.SportFieldId = sportFieldId;
         model.UserId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
         var callback = await _reservationService.UpdateReservationAsync(model);
         if (callback.StatusCode != HttpStatusCode.BadRequest) return RedirectToAction("Index");
@@ -72,14 +82,19 @@ public class ReservationController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostReservation(ReservationDto model)
+    public async Task<IActionResult> PostReservation(int sportFieldId, ReservationDto model)
     {
         if (!ModelState.IsValid) return View(model);
+        model.SportFieldId = sportFieldId;
         model.UserId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
         var callback = await _reservationService.CreateReservationAsync(model);
-        if (callback.StatusCode != HttpStatusCode.BadRequest) return RedirectToAction("Index");
+        
+        if (callback.StatusCode == HttpStatusCode.OK)
+        {
+            return RedirectToAction("Index");
+        }
+        
         ViewBag.ErrorMessage = callback.Error;
         return View(model);
     }
-    
 }

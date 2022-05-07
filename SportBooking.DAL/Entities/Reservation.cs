@@ -9,6 +9,7 @@ public class Reservation : BaseEntity
     public string PrimaryColor { get; set; }
     public string SecondaryColor { get; set; }
     public DateTime Created { get; set; }
+    public string Status { get; set; } = "Pending";
     public string UserId { get; set; }
     public int SportFieldId { get; set; }
     public virtual User User { get; set; }

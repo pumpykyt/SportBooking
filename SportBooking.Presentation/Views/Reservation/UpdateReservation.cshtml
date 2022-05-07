@@ -1,14 +1,8 @@
 ﻿@model SportBooking.BLL.Dtos.ReservationDto
 
 <div class="container mx-auto pt-36 min-h-screen">
-    <form class="w-1/2 mx-auto text-center mt-5 rounded bg-slate-500 px-3 py-2" method="post" asp-action="UpdateReservation">
+    <form asp-route-id="@Model.Id" asp-route-sportFieldId="@Model.SportFieldId" class="w-1/2 mx-auto text-center mt-5 rounded bg-slate-500 px-3 py-2" method="post" asp-action="UpdateReservation">
         <div class="mb-4 text-white font-semibold text-3xl">Update reservation</div>
-        <div>
-            <input hidden value="@Model.Id" class="bg-gray-600 form-control shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" asp-for="Id"/>
-        </div>
-        <div>
-            <input hidden value="@Model.SportFieldId" class="bg-gray-600 form-control shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" asp-for="SportFieldId"/>
-        </div>
         <div>
             <input hidden value="@Model.Total" class="bg-gray-600 form-control shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" asp-for="Total"/>
         </div>
