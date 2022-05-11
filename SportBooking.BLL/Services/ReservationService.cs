@@ -21,11 +21,12 @@ public class ReservationService : IReservationService
         _fieldRepository = fieldRepository;
     }
 
-    public async Task PayReservationAsync(int id)
+    public async Task<ReservationDto> PayReservationAsync(int id)
     {
         var reservation = await _repository.GetByIdAsync(id);
         reservation.Status = "Payed";
         await _repository.UpdateAsync(reservation);
+        return _mapper.Map<Reservation, ReservationDto>(reservation);
     }
 
     public async Task<ReservationCallback> CreateReservationAsync(ReservationDto reservation)
@@ -44,7 +45,7 @@ public class ReservationService : IReservationService
             };
         }
 
-        if (reservation.Start < DateTime.Now)
+        if (reservation.Start < DateTime.Now.AddDays(-1))
         {
             return new ReservationCallback
             {
@@ -61,7 +62,8 @@ public class ReservationService : IReservationService
         var endSchedule = new DateTime().AddHours(Convert.ToDouble(field.SportFieldDetail.EndProgram.Split('-')[0]))
                                         .AddMinutes(Convert.ToDouble(field.SportFieldDetail.EndProgram.Split('-')[1]));
         if (TimeSpan.Compare(startSchedule.TimeOfDay, newReservation.Start.TimeOfDay) == 1 || 
-            TimeSpan.Compare(endSchedule.TimeOfDay, newReservation.End.TimeOfDay) == -1)
+            TimeSpan.Compare(endSchedule.TimeOfDay, newReservation.End.TimeOfDay) == -1 || 
+            newReservation.Start.Day != newReservation.End.Day)
         {
             return new ReservationCallback
             {
@@ -102,6 +104,7 @@ public class ReservationService : IReservationService
         var field = await _fieldRepository.GetByIdAsync(updatedReservation.SportFieldId);
         var totalPrice = (dateDifference.Days * 24 + dateDifference.Hours) * field.PricePerHour;
         updatedReservation.Total = totalPrice;
+        updatedReservation.Status = "Pending";
         await _repository.UpdateAsync(updatedReservation);
         
         return new ReservationCallback
@@ -135,8 +138,8 @@ public class ReservationService : IReservationService
     {
         var reservations = await _repository.GetAllAsync();
         if (title is null) return null;
-        var filtered = reservations.Where(t => t.Title.Contains(title) && 
-                                                                           t.SportFieldId == sportFieldId);
+        var filtered = reservations.Where(t => t.Title.ToUpper().Contains(title.ToUpper()) && 
+                                               t.SportFieldId == sportFieldId);
         return _mapper.Map<IEnumerable<Reservation>, IEnumerable<ReservationDto>>(filtered);
     }
 

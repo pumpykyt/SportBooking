@@ -49,8 +49,8 @@ public class ReservationTests : IDisposable
             Address = "Test",
             SportFieldId = 1,
             Description = "Test",
-            StartProgram = "Test",
-            EndProgram = "Test"
+            StartProgram = "10-00",
+            EndProgram = "23-00"
         });
 
         _context.Users.Add(new User
@@ -73,10 +73,11 @@ public class ReservationTests : IDisposable
         var model = new ReservationDto
         {
             Id = 1,
-            Start = new DateTime(1974, 7, 10, 7, 10, 24),
-            End = new DateTime(1974, 7, 10, 10, 0, 24),
+            Start = new DateTime(2022, 7, 10, 12, 0, 0),
+            End = new DateTime(2022, 7, 10, 18, 0, 0),
             UserId = "UserTestId",
             SportFieldId = 1,
+            Status = "Pending",
             PrimaryColor = "Test",
             Title = "Test",
             SecondaryColor = "Test"

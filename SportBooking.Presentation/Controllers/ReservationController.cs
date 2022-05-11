@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ public class ReservationController : BaseController
 {
     private readonly IReservationService _reservationService;
     private readonly ISportFieldService _sportFieldService;
+    private readonly IMailService _mailService;
 
-    public ReservationController(IReservationService reservationService, ISportFieldService sportFieldService)
+    public ReservationController(IReservationService reservationService, ISportFieldService sportFieldService, IMailService mailService)
     {
         _reservationService = reservationService;
         _sportFieldService = sportFieldService;
+        _mailService = mailService;
     }
 
     [AllowAnonymous]
@@ -42,11 +45,18 @@ public class ReservationController : BaseController
         viewModel.SportFieldId = sportFieldId;
         return View(viewModel);
     }
+
+    public IActionResult InvoiceSent()
+    {
+        return View();
+    }
     
     public async Task<IActionResult> PayReservation(int id)
     {
-        await _reservationService.PayReservationAsync(id);
-        return RedirectToAction("Index");
+        var result = await _reservationService.PayReservationAsync(id);
+        var userEmail = User.Claims.SingleOrDefault(t => t.Type == ClaimTypes.Email).Value;
+        await _mailService.SendInvoiceAsync(userEmail, result);
+        return RedirectToAction("InvoiceSent");
     }
 
     [AllowAnonymous]

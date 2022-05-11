@@ -11,6 +11,8 @@ public class RegisterDto
     [RegularExpression(@"^(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", 
         ErrorMessage = "Password must contain: both upper and lowercase characters, at least on digit, one special character")]
     public string Password { get; set; }
+    [Compare("Password")]
+    public string ConfirmPassword { get; set; }
     [Required(ErrorMessage = "That field is required!")]
     public string FirstName { get; set; }
     [Required(ErrorMessage = "That field is required!")]

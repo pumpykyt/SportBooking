@@ -113,13 +113,14 @@ public class AuthController : BaseController
         if (!ModelState.IsValid) return View();
         
         var authCallback = await _authService.RegisterAsync(user);
-        if (authCallback.StatusCode == HttpStatusCode.Conflict)
+        switch (authCallback.StatusCode)
         {
-            ViewBag.ErrorMessage = "User with that email already exists";
-        }
-        if (authCallback.StatusCode == HttpStatusCode.InternalServerError)
-        {
-            ViewBag.ErrorMessage = "Server error";
+            case HttpStatusCode.Conflict:
+                ViewBag.ErrorMessage = "User with that email already exists";
+                return View(user);
+            case HttpStatusCode.InternalServerError:
+                ViewBag.ErrorMessage = "Server error";
+                return View(user);
         }
 
         var token = await _authService.GenerateEmailConfirmationTokenAsync(user.Email);

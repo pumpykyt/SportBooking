@@ -41,9 +41,9 @@ public class SportFieldTests : IDisposable
             ImageUrl = "Test",
             Address = "Test",
             Description = "Test",
-            EndProgram = "Test",
+            EndProgram = "22-00",
             PricePerHour = 999,
-            StartProgram = "Test",
+            StartProgram = "11-00",
             Title = "Test"
         };
 
@@ -77,9 +77,9 @@ public class SportFieldTests : IDisposable
             ImageUrl = "UpdatedTest",
             Address = "UpdatedTest",
             Description = "UpdatedTest",
-            EndProgram = "UpdatedTest",
+            EndProgram = "22-00",
             PricePerHour = 999,
-            StartProgram = "UpdatedTest",
+            StartProgram = "11-00",
             Title = "UpdatedTest"
         };
 
