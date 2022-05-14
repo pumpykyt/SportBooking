@@ -20,6 +20,24 @@ public class AuthController : BaseController
         _mailService = mailService;
     }
 
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(ChangePasswordDto model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var userEmail = User.Claims.SingleOrDefault(t => t.Type.Equals(ClaimTypes.Email)).Value;
+        await _authService.ChangePassword(model.Password, userEmail);
+        return RedirectToAction("Index", "Reservation");
+    }
+
     [AllowAnonymous]
     public IActionResult Login()
     {

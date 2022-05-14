@@ -105,6 +105,13 @@ public class AuthService : IAuthService
         return await _userManager.GenerateEmailConfirmationTokenAsync(user);
     }
 
+    public async Task ChangePassword(string newPassword, string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+    }
+
     public async Task ResetPasswordAsync(ResetPasswordDto model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);

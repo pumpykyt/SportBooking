@@ -2,10 +2,12 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
+using SportBooking.DAL.Entities;
 
 namespace SportBooking.Presentation.Controllers;
 
@@ -14,12 +16,14 @@ public class ReservationController : BaseController
     private readonly IReservationService _reservationService;
     private readonly ISportFieldService _sportFieldService;
     private readonly IMailService _mailService;
+    private readonly UserManager<User> _userManager;
 
-    public ReservationController(IReservationService reservationService, ISportFieldService sportFieldService, IMailService mailService)
+    public ReservationController(IReservationService reservationService, ISportFieldService sportFieldService, IMailService mailService, UserManager<User> userManager)
     {
         _reservationService = reservationService;
         _sportFieldService = sportFieldService;
         _mailService = mailService;
+        _userManager = userManager;
     }
 
     [AllowAnonymous]
@@ -27,6 +31,8 @@ public class ReservationController : BaseController
     {
         var userId = User?.Claims.SingleOrDefault(t => t.Type.Equals("id"))?.Value;
         var result = await _reservationService.GetUserReservationsAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId);
+        ViewBag.User = user;
         return View(result);
     }
     
@@ -106,5 +112,13 @@ public class ReservationController : BaseController
         
         ViewBag.ErrorMessage = callback.Error;
         return View(model);
+    }
+    
+    public async Task<IActionResult> CancelReservation(int reservationId)
+    {
+        var userEmail = User?.Claims.SingleOrDefault(t => t.Type.Equals(ClaimTypes.Email)).Value;
+        await _reservationService.CancelReservationAsync(reservationId);
+        await _mailService.SendReservationCancelMailAsync(userEmail, reservationId);
+        return RedirectToAction("Index");
     }
 }

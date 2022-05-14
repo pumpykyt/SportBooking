@@ -78,9 +78,7 @@ public class ReservationTests : IDisposable
             UserId = "UserTestId",
             SportFieldId = 1,
             Status = "Pending",
-            PrimaryColor = "Test",
             Title = "Test",
-            SecondaryColor = "Test"
         };
 
         await _reservationService.CreateReservationAsync(model);
@@ -100,9 +98,7 @@ public class ReservationTests : IDisposable
             End = new DateTime(1974, 7, 10, 10, 0, 24),
             UserId = "UserTestId",
             SportFieldId = 1,
-            PrimaryColor = "Test",
             Title = "Test",
-            SecondaryColor = "Test"
         });
         await _context.SaveChangesAsync();
         var result = await _reservationService.GetReservationAsync(77);
@@ -118,9 +114,7 @@ public class ReservationTests : IDisposable
             End = new DateTime(1974, 7, 10, 10, 0, 24),
             UserId = "UserTestId",
             SportFieldId = 1,
-            PrimaryColor = "Test",
             Title = "Test",
-            SecondaryColor = "Test"
         });
         await _context.SaveChangesAsync();
         var dataBeforeDelete = await _context.Reservations.ToListAsync();
@@ -141,9 +135,7 @@ public class ReservationTests : IDisposable
             End = new DateTime(1974, 7, 10, 10, 0, 24),
             UserId = "UserTestId",
             SportFieldId = 1,
-            PrimaryColor = "Test",
             Title = "Test",
-            SecondaryColor = "Test"
         });
         await _context.SaveChangesAsync();
 
@@ -154,9 +146,7 @@ public class ReservationTests : IDisposable
             End = new DateTime(1974, 7, 10, 10, 0, 24),
             UserId = "UserTestId",
             SportFieldId = 1,
-            PrimaryColor = "Test",
             Title = "Updated",
-            SecondaryColor = "Test"
         };
 
         await _reservationService.UpdateReservationAsync(modelToUpdate);

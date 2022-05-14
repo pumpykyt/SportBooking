@@ -9,6 +9,7 @@ public interface IAuthService
     Task<AuthCallback> RegisterAsync(RegisterDto model);
     Task<string> GenerateResetPasswordTokenAsync(string email);
     Task<string> GenerateEmailConfirmationTokenAsync(string email);
+    Task ChangePassword(string newPassword, string email);
     Task ResetPasswordAsync(ResetPasswordDto model);
     Task ConfirmEmailAsync(string token, string email);
 }

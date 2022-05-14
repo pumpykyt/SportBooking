@@ -24,7 +24,7 @@
                         title: t.title, 
                         start: t.start,
                         end: t.end,
-                        color: t.primaryColor
+                        color: '#378006'
                    }));
              });
         calendar.render();
@@ -51,18 +51,6 @@
             <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" asp-for="End" class="form-control"/>
             <span asp-validation-for="End" class="text-danger"></span>
             <span class="text-danger">@ViewBag.ErrorMessage</span>
-        </div>
-        <div class="mb-4">
-            <label class="block text-black text-sm font-bold mb-2" asp-for="PrimaryColor"></label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   placeholder="Primary colour" asp-for="PrimaryColor" type="text" data-coloris>
-            <span asp-validation-for="PrimaryColor" class="text-danger"></span>
-        </div>
-        <div class="mb-4">
-            <label class="block text-black text-sm font-bold mb-2" asp-for="SecondaryColor"></label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   placeholder="Secondary colour" asp-for="SecondaryColor" type="text" data-coloris>
-            <span asp-validation-for="SecondaryColor" class="text-danger"></span>
         </div>
         <button
             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

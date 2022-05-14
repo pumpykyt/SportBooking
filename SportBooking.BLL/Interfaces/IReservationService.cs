@@ -14,4 +14,5 @@ public interface IReservationService
     Task<IEnumerable<ReservationDto>> GetSportFieldReservationsByTitleAsync(string title, int sportFieldId);
     Task<IEnumerable<ReservationDto>> GetAllReservationsAsync();
     Task<ReservationDto> GetReservationAsync(int id);
+    Task CancelReservationAsync(int reservationId);
 }

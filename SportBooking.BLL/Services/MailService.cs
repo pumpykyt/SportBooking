@@ -1,19 +1,23 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using SportBooking.BLL.Configs;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
+using SportBooking.DAL.Entities;
 
 namespace SportBooking.BLL.Services;
 
 public class MailService : IMailService
 {
     private readonly SmtpClient _smtpClient;
+    private readonly UserManager<User> _userManager;
 
-    public MailService(SmtpClient smtpClient)
+    public MailService(SmtpClient smtpClient, UserManager<User> userManager)
     {
         _smtpClient = smtpClient;
+        _userManager = userManager;
     }
 
     public async Task SendMailAsync(string to, string subject, string message)
@@ -33,12 +37,13 @@ public class MailService : IMailService
     {
         var path = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "Invoice.html");
         var htmlString = await File.ReadAllTextAsync(path);
-
+        var user = await _userManager.FindByIdAsync(model.UserId);
+        
         var body = htmlString.Replace("@ReservationId", model.Id.ToString())
                              .Replace("@ReservationTitle", model.Title)
                              .Replace("@DateTimeUtcNow", DateTime.UtcNow.ToString())
                              .Replace("@TotalPrice", model.Total.ToString())
-                             .Replace("@SportFieldId", model.SportFieldId.ToString())
+                             .Replace("@Fullname", user.FirstName + " " + user.LastName)
                              .Replace("@Start", model.Start.ToString())
                              .Replace("@End", model.End.ToString());
 
@@ -51,6 +56,19 @@ public class MailService : IMailService
             To = { to }
         };
         
+        await _smtpClient.SendMailAsync(mail);
+    }
+
+    public async Task SendReservationCancelMailAsync(string to, int reservationId)
+    {
+        var mail = new MailMessage
+        {
+            To = { to },
+            From = new MailAddress("sportbookingproject@gmail.com"),
+            Subject = "Reservation cancelled",
+            Body = $"Reservation with id {reservationId} cancelled. Money payed back"
+        };
+
         await _smtpClient.SendMailAsync(mail);
     }
 }

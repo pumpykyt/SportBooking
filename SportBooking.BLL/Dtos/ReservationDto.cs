@@ -15,10 +15,6 @@ public class ReservationDto
     public string Title { get; set; }
     [Required(ErrorMessage = "That field is required!")]
     public int Total { get; set; }
-    [Required(ErrorMessage = "That field is required!")]
-    public string PrimaryColor { get; set; }
-    [Required(ErrorMessage = "That field is required!")]
-    public string SecondaryColor { get; set; }
     public string? Status { get; set; }
     public string? UserId { get; set; }
     public int SportFieldId { get; set; }

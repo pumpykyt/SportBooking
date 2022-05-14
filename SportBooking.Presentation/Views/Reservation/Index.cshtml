@@ -1,7 +1,16 @@
 ﻿@model IEnumerable<SportBooking.BLL.Dtos.ReservationDto>
 
 <div class="min-h-screen pt-36">
-    <div class="container mx-auto overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="container mx-auto overflow-x-auto sm:rounded-lg">
+        <div class="grid grid-cols-1 shadow-md rounded p-3 mb-4">
+            <div class="text-black text-4xl mb-2 font-semibold">My profile: </div>
+            <div class="text-black text-2xl mb-2">Firstname: @ViewBag.User.FirstName</div>
+            <div class="text-black text-2xl mb-2">Lastname: @ViewBag.User.LastName</div>
+            <a asp-controller="Auth" asp-action="ChangePassword" class="w-48 rounded text-center text-white bg-blue-600 px-3 py-1">
+                Change password
+            </a>
+        </div>
+        <div class="text-black text-2xl mb-2">My reservations: </div>
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -63,9 +72,11 @@
                                 Delete
                             </a>
                         }
-                        else
+                        else if(element.Start > DateTime.Now)
                         {
-                            <div></div>
+                            <a asp-controller="Reservation" asp-action="CancelReservation" asp-route-reservationId="@element.Id" class="rounded bg-red-600 px-3 py-1">
+                                Cancel reservation
+                            </a>
                         }
                     </td>
                 </tr>

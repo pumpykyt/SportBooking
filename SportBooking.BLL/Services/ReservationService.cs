@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
 using SportBooking.DAL.Entities;
@@ -153,5 +154,11 @@ public class ReservationService : IReservationService
     {
         var reservation = await _repository.GetByIdAsync(id);
         return _mapper.Map<Reservation, ReservationDto>(reservation);
+    }
+
+    public async Task CancelReservationAsync(int reservationId)
+    {
+        var reservation = await _repository.GetByIdAsync(reservationId);
+        await _repository.DeleteAsync(reservation);
     }
 }
