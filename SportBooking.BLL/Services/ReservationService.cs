@@ -46,7 +46,7 @@ public class ReservationService : IReservationService
             };
         }
 
-        if (reservation.Start < DateTime.Now.AddDays(-1))
+        if (reservation.Start < DateTime.Now)
         {
             return new ReservationCallback
             {
@@ -73,7 +73,9 @@ public class ReservationService : IReservationService
             };
         }
         var dateDifference = newReservation.End - newReservation.Start;
-        var totalPrice = (dateDifference.Days * 24 + dateDifference.Hours) * field.PricePerHour;
+        var totalPrice = (double)((dateDifference.Days * 24 + 
+                                   dateDifference.Hours + 
+                                   (double)dateDifference.Minutes * (1d / 60d)) * field.PricePerHour);
         newReservation.Total = totalPrice;
         newReservation.Status = "Pending";
         newReservation.Created = DateTime.UtcNow;

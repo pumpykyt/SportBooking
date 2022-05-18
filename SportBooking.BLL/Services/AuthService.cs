@@ -125,4 +125,18 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(email);
         var result = await _userManager.ConfirmEmailAsync(user, token);
     }
+
+    public async Task EditUserAsync(UserEditDto model, string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        user.LastName = model.LastName;
+        user.FirstName = model.FirstName;
+        await _userManager.UpdateAsync(user);
+    }
+
+    public async Task DeleteAccountAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        await _userManager.DeleteAsync(user);
+    }
 }

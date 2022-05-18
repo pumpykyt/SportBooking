@@ -3,9 +3,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SportBooking.BLL.Dtos;
 using SportBooking.BLL.Interfaces;
+using SportBooking.DAL.Entities;
 
 namespace SportBooking.Presentation.Controllers;
 
@@ -13,16 +15,47 @@ public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
     private readonly IMailService _mailService;
+    private readonly UserManager<User> _userManager;
 
-    public AuthController(IAuthService authService, IMailService mailService)
+    public AuthController(IAuthService authService, IMailService mailService, UserManager<User> userManager)
     {
         _authService = authService;
         _mailService = mailService;
+        _userManager = userManager;
     }
 
     public IActionResult ChangePassword()
     {
         return View();
+    }
+
+    public async Task<IActionResult> EditProfile()
+    {
+        var userId = User.Claims.SingleOrDefault(t => t.Type.Equals("id")).Value;
+        var user = await _userManager.FindByIdAsync(userId);
+        
+        return View(new UserEditDto
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName
+        });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditProfile(UserEditDto model)
+    {
+        if (!ModelState.IsValid) return View(model);
+        var userId = User.Claims.SingleOrDefault(t => t.Type.Equals("id")).Value;
+        await _authService.EditUserAsync(model, userId);
+        return RedirectToAction("Index", "Reservation");
+    }
+
+    public async Task<IActionResult> DeleteProfile()
+    {
+        var userId = User.Claims.SingleOrDefault(t => t.Type.Equals("id")).Value;
+        await _authService.DeleteAccountAsync(userId);
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("Index", "SportField");
     }
 
     [HttpPost]

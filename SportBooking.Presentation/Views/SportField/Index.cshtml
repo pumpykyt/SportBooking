@@ -35,8 +35,13 @@
             <div class="drop-shadow-lg rounded grid grid-cols-1">
                 <img alt="Image" src="@element.ImageUrl"/>
                 <div class="bg-gray-500 p-3 grid grid-cols-1">
-                    <div class="text-white text-md font-regular">Id: @element.Id</div>
-                    <a class="text-white text-xl mb-3 font-semibold" asp-controller="SportField" asp-action="SportFieldWithDetail" asp-route-id="@element.Id">@element.Title</a>
+                    @if (isAuthenticated == true && !isAdmin)
+                    {
+                        <div class="text-white text-md font-regular">Id: @element.Id</div>
+                    }
+                    <a class="text-white text-3xl mb-3 font-semibold" asp-controller="SportField" asp-action="SportFieldWithDetail" asp-route-id="@element.Id">@element.Title</a>
+                    <div class="text-white text-lg mb-3">Schedule: @element.StartProgram to @element.EndProgram</div>
+                    <div class="text-white text-md mb-3">Price per hour: @element.PricePerHour</div>
                     @if (isAdmin)
                     {
                         <div class="inline-block">

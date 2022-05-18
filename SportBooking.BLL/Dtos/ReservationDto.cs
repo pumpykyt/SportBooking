@@ -14,7 +14,7 @@ public class ReservationDto
     [Required(ErrorMessage = "That field is required!")]
     public string Title { get; set; }
     [Required(ErrorMessage = "That field is required!")]
-    public int Total { get; set; }
+    public double Total { get; set; }
     public string? Status { get; set; }
     public string? UserId { get; set; }
     public int SportFieldId { get; set; }

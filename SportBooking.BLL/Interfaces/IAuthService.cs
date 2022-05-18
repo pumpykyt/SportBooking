@@ -12,4 +12,6 @@ public interface IAuthService
     Task ChangePassword(string newPassword, string email);
     Task ResetPasswordAsync(ResetPasswordDto model);
     Task ConfirmEmailAsync(string token, string email);
+    Task EditUserAsync(UserEditDto model, string userId);
+    Task DeleteAccountAsync(string userId);
 }
