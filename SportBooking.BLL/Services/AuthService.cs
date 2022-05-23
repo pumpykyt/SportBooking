@@ -28,7 +28,7 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
         {
-            return new AuthCallback { StatusCode = HttpStatusCode.Unauthorized };
+            return new AuthCallback { StatusCode = HttpStatusCode.NotFound };
         }
         
         var authResult = await _userManager.CheckPasswordAsync(user, password);

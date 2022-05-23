@@ -48,9 +48,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
                                                       .AsNoTracking()
                                                       .ToListAsync();
 
-    public async Task<T?> GetByIdAsync(int id) => await QueryWithNavigationFields()
-                                                        .AsNoTracking()
-                                                        .SingleOrDefaultAsync(t => t.Id == id);
+    public async Task<T?> GetByIdAsync(int id)
+    {
+        var result = await QueryWithNavigationFields()
+                           .AsNoTracking()
+                           .SingleOrDefaultAsync(t => t.Id == id);
+        return result;
+    } 
 
     public async Task InsertAsync(T entity)
     {

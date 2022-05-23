@@ -145,11 +145,16 @@ public class AuthController : BaseController
     {
         if (!ModelState.IsValid) return View();
         var authCallback = await _authService.LoginAsync(user.Email, user.Password);
-        if (authCallback.StatusCode == HttpStatusCode.Unauthorized)
+        switch (authCallback.StatusCode)
         {
-            ViewBag.ErrorMessage = "Wrong login or Password";
-            return View();
+            case HttpStatusCode.Unauthorized:
+                ViewBag.ErrorMessage = "Wrong login or Password";
+                return View();
+            case HttpStatusCode.NotFound:
+                ViewBag.ErrorMessage = "There is not user with such email";
+                return View();
         }
+
         var principal = new ClaimsPrincipal(authCallback.ClaimsIdentity);
         HttpContext.User = principal;
         Thread.CurrentPrincipal = principal;  
