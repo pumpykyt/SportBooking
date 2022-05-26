@@ -161,6 +161,7 @@ public class ReservationService : IReservationService
     public async Task CancelReservationAsync(int reservationId)
     {
         var reservation = await _repository.GetByIdAsync(reservationId);
+        _repository.DetachLocal(reservation, reservationId);
         await _repository.DeleteAsync(reservation);
     }
 }

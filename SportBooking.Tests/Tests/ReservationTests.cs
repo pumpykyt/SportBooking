@@ -187,6 +187,60 @@ public class ReservationTests : IDisposable
         Assert.Equal(modelToUpdate.Title, result.Title);
     }
 
+    [Fact]
+    public async Task GetReservationsByTitle_Test()
+    {
+        //arrange
+        InitTempInstances();
+        await InitTempUser();
+        await InitTempSportField();
+        
+        await _context.Reservations.AddAsync(new Reservation
+        {
+            Id = 77,
+            Start = new DateTime(1974, 7, 10, 7, 10, 24),
+            End = new DateTime(1974, 7, 10, 10, 0, 24),
+            UserId = "UserTestId",
+            SportFieldId = 1,
+            Title = "Test",
+        });
+        await _context.SaveChangesAsync();
+        
+        //act
+        var result = await _reservationService.GetSportFieldReservationsByTitleAsync("Test", 1);
+        
+        //assert
+        Assert.NotNull(result);
+        Assert.Equal("Test", result.First().Title);
+    }
+
+    [Fact]
+    public async Task CancelReservationTest()
+    {
+        //arrange
+        InitTempInstances();
+        await InitTempUser();
+        await InitTempSportField();
+        
+        await _context.Reservations.AddAsync(new Reservation
+        {
+            Id = 77,
+            Start = new DateTime(1974, 7, 10, 7, 10, 24),
+            End = new DateTime(1974, 7, 10, 10, 0, 24),
+            UserId = "UserTestId",
+            SportFieldId = 1,
+            Title = "Test",
+        });
+        await _context.SaveChangesAsync();
+        
+        //act
+        await _reservationService.CancelReservationAsync(77);
+        
+        //assert
+        var result = await _context.Reservations.SingleOrDefaultAsync(t => t.Id == 77);
+        Assert.Null(result);
+    }
+
     public void Dispose()
     {
         _context.Dispose();
